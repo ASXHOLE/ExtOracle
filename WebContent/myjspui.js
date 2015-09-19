@@ -226,6 +226,7 @@ Ext.onReady(function() {
 	]);
 	
 	var jsonstore = new Ext.data.JsonStore({
+		//proxy:
         totalProperty: "results",
   		root: "rows", 
   		fields: ['number','name','age','gender','college','class','post'], 
