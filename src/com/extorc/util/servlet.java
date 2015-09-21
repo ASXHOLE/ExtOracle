@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.extorc.dao.studentDao;
+import com.extorc.service.studentService;
 
 import net.sf.json.JSONArray; 
 
@@ -43,11 +44,14 @@ public class servlet extends HttpServlet {
 			System.out.println("get addt!!");
 		}else if(method.equals("query")){
 			JSONArray al=new JSONArray();
-			studentDao sd=new studentDao();
-			al=sd.query("select * from student");
+			studentService ss=new studentService();
+			String rows;
+			rows=ss.query("select * from student");
 			//System.out.println(al.size());
-			System.out.println("{\"results\":"+al.size()+",\"rows\":"+al+"}");
-			out.print("{\"results\":"+al.size()+",\"rows\":"+al+"}");
+			System.out.println("{\"results\":"+al.size()+",\"rows\":["+rows+"]}");
+//			out.print("{\",\"rows\":"+al+"}");
+			//System.out.println(al.get(0));
+			out.print("{\"results\":"+al.size()+",\"rows\":["+rows+"]}");
 			out.flush();
 			out.close();
 
@@ -69,7 +73,7 @@ public class servlet extends HttpServlet {
 		
 		JSONArray al=new JSONArray();
 		studentDao sd=new studentDao();
-		al=sd.query("select * from student");
+		//al=sd.query("select * from student");
 		System.out.println(al);
 	}
 
