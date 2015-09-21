@@ -209,17 +209,20 @@ Ext.onReady(function() {
 				]};
 	
 	         
- var jreader = new Ext.data.JsonReader({
+/* var jreader = new Ext.data.JsonReader({
 		totalProperty: "results",  //totalRecords属性由json.results得到
         successProperty: true,    //json数据中，保存是否返回成功的属性名
         root: "rows",            //构造元数据的数组由json.rows得到
         id: "id"                //id由json.id得到
-	},MyRecord);
+	},MyRecord);*/
 	
 	var jsonstore = new Ext.data.JsonStore({
 		proxy:new Ext.data.HttpProxy({url:'src/com/extorc/util/servlet?method=query'}),
-        reader:jreader,
+        //reader:jreader,
         remoteSort:true,
+        fields: ['number','name','age','gender','college','classes','post'],
+		root: "rows", 
+  		
         autoLoad:true 
         });
 	

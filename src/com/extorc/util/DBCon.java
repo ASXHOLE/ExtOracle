@@ -1,9 +1,6 @@
 package com.extorc.util;
 
 import java.sql.*;
-import java.util.ArrayList;
-
-import com.extorc.model.Student;
 
 public class DBCon {
 
@@ -11,6 +8,10 @@ public class DBCon {
 	static Statement stmt = null;
 	static Connection conn=null;
 	
+	public static Connection getConn() {
+		return conn;
+	}
+
 	/* 获取数据库连接的函数*/
 	public static  Connection  getConnection(){
 		Connection conn=null;
@@ -34,20 +35,6 @@ public class DBCon {
         return conn;
     }    
 	
-	/* 查询数据库，输出符合要求的记录的情况*/
-	public ResultSet query(String sql){
-		conn=getConnection();
-		ArrayList result =new ArrayList();
-		try{
-			stmt=(Statement) conn.createStatement();
-			rs=stmt.executeQuery(sql);
-		}catch(SQLException e){
-			System.out.println("查询数据失败");
-			e.printStackTrace();  
-			return null;
-		}
-		return rs;
-		
-	}
+	
 	
 }
