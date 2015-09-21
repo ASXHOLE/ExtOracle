@@ -19,6 +19,7 @@ public class studentService {
 		rs = sd.query(sql);
 		conn=studentDao.getConn();
 		String rows = "";
+		String jsondata="";
 		try {
 			while (rs.next()) {
 				Student student = new Student();
@@ -53,7 +54,7 @@ public class studentService {
 				}
 			}
 			rs.last();
-			System.out.println(rs.getRow());
+			jsondata="{\"results\":"+rs.getRow()+",\"rows\":["+rows+"]}";
 			conn.close();
 		} catch (SQLException e) {
 			System.out.println("查询数据失败");
@@ -61,6 +62,6 @@ public class studentService {
 			return null;
 		}
 		
-		return rows;
+		return jsondata;
 	}
 }

@@ -20,12 +20,9 @@ public class studentDao {
 		}catch(SQLException e){
 			System.out.println("查询数据失败");
 			e.printStackTrace();  
-			
 			return null;
 		}
-		
 		return rs;
-		
 	}
 	public static Connection getConn() {
 		return conn;

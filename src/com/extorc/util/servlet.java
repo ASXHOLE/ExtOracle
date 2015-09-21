@@ -45,13 +45,10 @@ public class servlet extends HttpServlet {
 		}else if(method.equals("query")){
 			JSONArray al=new JSONArray();
 			studentService ss=new studentService();
-			String rows;
-			rows=ss.query("select * from student");
-			//System.out.println(al.size());
-			System.out.println("{\"results\":"+al.size()+",\"rows\":["+rows+"]}");
-//			out.print("{\",\"rows\":"+al+"}");
-			//System.out.println(al.get(0));
-			out.print("{\"results\":"+al.size()+",\"rows\":["+rows+"]}");
+			String jsondata;
+			jsondata=ss.query("select * from student");
+			System.out.println("query---"+jsondata);
+			out.print(jsondata);
 			out.flush();
 			out.close();
 

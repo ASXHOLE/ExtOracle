@@ -241,7 +241,8 @@ Ext.onReady(function() {
 		sm:selModel,
 		columnWidth: .75,
 		clicksToEdit:1,
-		autoHeight:true,
+		//autoHeight:true,
+		height:290,
 		tbar: [  
         {  
             text: "新增",  
@@ -286,7 +287,12 @@ Ext.onReady(function() {
        				}
             	}
         }  
-    ],  
+    ],
+    bbar:new Ext.PagingToolbar({
+    	pageSize:5,
+    	store:jsonstore,
+    	displayInfo:true
+    }),
 		columns:[selModel,
 				 {header:"学号",dataIndex:"number",
 					 editor: new Ext.form.TextField(
