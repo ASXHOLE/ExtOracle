@@ -15,9 +15,9 @@ public class studentService {
 		ResultSet rs = null;
 		Connection conn =null;
 		studentDao sd=new studentDao();
-		conn=studentDao.getConn();
 		JSONArray result = new JSONArray();
 		rs = sd.query(sql);
+		conn=studentDao.getConn();
 		String rows = "";
 		try {
 			while (rs.next()) {
