@@ -15,8 +15,8 @@
 <body>
 
 	<div id="test_div"></div>
-	<form action="src/com/extorc/util/servlet?method=text">
-		<input type="submit"/>
+	<form action="src/com/extorc/util/servlet?method=add" method="post">
+		<input type="submit" />
 	</form>
 </body>
 </html>

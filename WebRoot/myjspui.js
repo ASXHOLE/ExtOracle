@@ -165,7 +165,7 @@ Ext.onReady(function() {
 					age:Ext.getCmp('age').getValue(),
 					gender:Ext.getCmp('gender').getValue().getGroupValue(),
 					college:Ext.getCmp('collegeCombo').getValue(),
-					class:Ext.getCmp('classCombo').getValue(),
+					classes:Ext.getCmp('classCombo').getValue(),
 					post:checkedPost
 				});
 				gp.stopEditing();
@@ -197,40 +197,29 @@ Ext.onReady(function() {
               {name:'age',type:'int'},
               {name:'gender',type:'String'},
               {name:'college',type:'String'},
-              {name:'class',type:'String'},
+              {name:'classes',type:'String'},
               {name:'post',type:'String'}
           ]);
 	
 	var jsondata={'results':3,//--------------------------------------------------示例学生数据
-	
 				'rows':[
 				{'id':1,'number':"s00001",'name':"kit",'age':15,'gender':'m','college':'c','class':'c2','post':' 班长 团支书 生活委员'},
 				{'id':2,'number':"s00002",'name':"cat",'age':17,'gender':'f','college':'f','class':'f1','post':' 团支书 学习委员'},
 				{'id':3,'number':"s00003",'name':"desu",'age':20,'gender':'m','college':'m','class':'m3','post':' 班长 团支书'}
 				]};
-	         
-	         
 	
-	 var jreader = new Ext.data.JsonReader({
+	         
+ var jreader = new Ext.data.JsonReader({
 		totalProperty: "results",  //totalRecords属性由json.results得到
         successProperty: true,    //json数据中，保存是否返回成功的属性名
         root: "rows",            //构造元数据的数组由json.rows得到
         id: "id"                //id由json.id得到
-	},[
-		{name:'number'},
-		{name:'name'},
-		{name:'age'},
-		{name:'gender'},
-		{name:'college'},
-		{name:'class'}
-	]);
+	},MyRecord);
 	
 	var jsonstore = new Ext.data.JsonStore({
-		//proxy:
-        totalProperty: "results",
-  		root: "rows", 
-  		fields: ['number','name','age','gender','college','class','post'], 
-        data:jsondata,
+		proxy:new Ext.data.HttpProxy({url:'src/com/extorc/util/servlet?method=query'}),
+        reader:jreader,
+        remoteSort:true,
         autoLoad:true 
         });
 	
@@ -240,7 +229,7 @@ Ext.onReady(function() {
 	    fields: ['valField','displayText'],  
 	    data: [['m','男'],['f','女']]//性别代码 
      });
-     
+     var _this = this;
      var beforeedit;
 	
 	var gp = new Ext.grid.EditorGridPanel({
@@ -255,6 +244,7 @@ Ext.onReady(function() {
             text: "新增",  
             //iconCls: "save",  
             handler: function(){
+            	debugger
                 var p = new MyRecord({
 						id:'',
 						number:'',
@@ -327,7 +317,7 @@ Ext.onReady(function() {
 										    triggerAction: "all",  
 										    store: collegeStore
 								})},
-				{header:"班级",dataIndex:"class",
+				{header:"班级",dataIndex:"classes",
 		         				renderer:function(value, metaData, record, rowIndex, colIndex, store) {  
         									var idx = allclassStore.find("valueField", value);  
         									return (idx != "-1") ? allclassStore.getAt(idx).data.displayField : '';//翻译班级代码

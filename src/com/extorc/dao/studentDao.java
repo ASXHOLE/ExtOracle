@@ -1,30 +1,29 @@
 package com.extorc.dao;
 
-import java.util.ArrayList;
 import java.sql.*;
-import java.util.ArrayList;
-
 import com.extorc.model.Student;
 import com.extorc.util.DBCon;
+import net.sf.json.JSONArray; 
 
 
 public class studentDao {
 	
-	public ArrayList query(String sql){//查询方法
+	public JSONArray query(String sql){//查询方法
 		ResultSet rs = null;
-		DBCon db=new DBCon();
-		ArrayList result =new ArrayList();
+		DBCon dbc=new DBCon();
+		JSONArray result =new JSONArray();
+		rs=dbc.query(sql);
 		try{
 			while(rs.next()){
 				Student student=new Student();
 				student.setId(rs.getInt("ID"));
-				student.setS_age(rs.getInt("S_AGE"));
-				student.setS_number(rs.getString("S_NUMBER"));
-				student.setS_name(rs.getString("S_NAME"));
-				student.setS_gender(rs.getString("S_GENDER"));
-				student.setS_college(rs.getString("S_COLLEGE"));
-				student.setS_class(rs.getString("S_CLASS"));
-				student.setS_post(rs.getString("S_POST"));
+				student.setAge(rs.getInt("S_AGE"));
+				student.setNumber(rs.getString("S_NUMBER"));
+				student.setName(rs.getString("S_NAME"));
+				student.setGender(rs.getString("S_GENDER"));
+				student.setCollege(rs.getString("S_COLLEGE"));
+				student.setClasses(rs.getString("S_CLASS"));
+				student.setPost(rs.getString("S_POST"));
 				result.add(student);
 			}
 		}catch(SQLException e){
