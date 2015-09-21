@@ -24,6 +24,15 @@ public class servlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		
+		//DBCon dbc=new DBCon();
+		//dbc.getConnection();
+		String method=(String) request.getSession().getAttribute("method");
+		if(method.equals("add")){
+			System.out.println("test!!");
+		}else if(method.equals("text")){
+			System.out.println("text!!");
+		}
 	}
 
 	/**
@@ -31,6 +40,13 @@ public class servlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		System.out.println("test!!post");
+		/*String method=request.getParameter("method");
+		if(method.equals("add")){
+			System.out.println("test!!");
+		}else if(method.equals("text")){
+			System.out.println("text!!");
+		}*/
 	}
 
 }
