@@ -82,7 +82,7 @@ public class servlet extends HttpServlet {
 			studentService ss=new studentService();
 			String jsondata;
 			jsondata=ss.query("SELECT * FROM ( SELECT A.*, ROWNUM RN FROM (SELECT * FROM student order by id ) A WHERE ROWNUM <= "+(limit+start)+" ) WHERE RN >"+start);
-			System.out.println("doPost queryall---"+jsondata);
+			System.out.println("doPost query---"+jsondata);
 			out.print(jsondata);
 			out.flush();
 			out.close();

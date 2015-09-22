@@ -152,46 +152,14 @@ Ext
 								{
 									text : '查询',
 									handler : function() {
-										var gp = Ext.getCmp('egp');
-										var rowIndex = gp.getStore().getCount();
-										/* 验证学号是否重复 */
-										for (var i = 0; i < rowIndex; i++) {
-											var record = gp.getStore().getAt(i);
-											var fieldName = gp.getColumnModel()
-													.getDataIndex(1);
-											var data = record.get(fieldName);
-											if (Ext.getCmp('number').getValue() == data) {
-												Ext.MessageBox.alert("警告",
-														"该学生学号重复，不能添加！");
-												return 0;
-											}
-										}
-										/* 添加新纪录 */
-										var p = new MyRecord(
-												{
-													id : '',
-													number : Ext.getCmp(
-															'number')
-															.getValue(),
-													name : Ext.getCmp('name')
-															.getValue(),
-													age : Ext.getCmp('age')
-															.getValue(),
-													gender : Ext.getCmp(
-															'gender')
-															.getValue()
-															.getGroupValue(),
-													college : Ext.getCmp(
-															'collegeCombo')
-															.getValue(),
-													classes : Ext.getCmp(
-															'classCombo')
-															.getValue(),
-													post : checkedPost
-												});
-										gp.stopEditing();
-										jsonstore.insert(0, p);
-										gp.startEditing(0, 0);
+										Ext.getCmp('number').getValue();
+										Ext.getCmp('name').getValue();
+										Ext.getCmp('age').getValue();
+										Ext.getCmp('collegeCombo').getValue();
+										Ext.getCmp('classCombo').getValue();
+										
+										alert(Ext.getCmp('number').getValue()+Ext.getCmp('name').getValue()+Ext.getCmp('age').getValue()+Ext.getCmp('collegeCombo').getValue()+Ext.getCmp('classCombo').getValue());
+										
 									}
 								}, {
 									text : '重置',
@@ -228,37 +196,7 @@ Ext
 				type : 'String'
 			} ]);
 
-			var jsondata = {
-				'results' : 3,// --------------------------------------------------示例学生数据
-				'rows' : [ {
-					'id' : 1,
-					'number' : "s00001",
-					'name' : "kit",
-					'age' : 15,
-					'gender' : 'm',
-					'college' : 'c',
-					'class' : 'c2',
-					'post' : ' 班长 团支书 生活委员'
-				}, {
-					'id' : 2,
-					'number' : "s00002",
-					'name' : "cat",
-					'age' : 17,
-					'gender' : 'f',
-					'college' : 'f',
-					'class' : 'f1',
-					'post' : ' 团支书 学习委员'
-				}, {
-					'id' : 3,
-					'number' : "s00003",
-					'name' : "desu",
-					'age' : 20,
-					'gender' : 'm',
-					'college' : 'm',
-					'class' : 'm3',
-					'post' : ' 班长 团支书'
-				} ]
-			};
+			
 
 			var newp = new Ext.form.FormPanel(
 					{
