@@ -64,12 +64,21 @@ public class servlet extends HttpServlet {
 		PrintWriter out = response.getWriter();
 		String method=request.getParameter("method");
 		
-		int start = Integer.parseInt(request.getParameter("start"));
-		int limit = Integer.parseInt(request.getParameter("limit"));
-		
 		if(method.equals("add")){
 			System.out.println("post add!!");
 		}else if(method.equals("queryall")){
+			int start = Integer.parseInt(request.getParameter("start"));
+			int limit = Integer.parseInt(request.getParameter("limit"));
+			studentService ss=new studentService();
+			String jsondata;
+			jsondata=ss.query("SELECT * FROM ( SELECT A.*, ROWNUM RN FROM (SELECT * FROM student order by id ) A WHERE ROWNUM <= "+(limit+start)+" ) WHERE RN >"+start);
+			System.out.println("doPost queryall---"+jsondata);
+			out.print(jsondata);
+			out.flush();
+			out.close();
+		}else if(method.equals("query")){
+			int start = Integer.parseInt(request.getParameter("start"));
+			int limit = Integer.parseInt(request.getParameter("limit"));
 			studentService ss=new studentService();
 			String jsondata;
 			jsondata=ss.query("SELECT * FROM ( SELECT A.*, ROWNUM RN FROM (SELECT * FROM student order by id ) A WHERE ROWNUM <= "+(limit+start)+" ) WHERE RN >"+start);
