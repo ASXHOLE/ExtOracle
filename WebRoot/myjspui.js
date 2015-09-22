@@ -42,6 +42,25 @@ Ext
 			allclassStore.loadData(foreignlanguage, true);
 			allclassStore.loadData(machinecar, true);
 			allclassStore.loadData(computer, true);
+			
+			var jsonstore = new Ext.data.JsonStore({
+				proxy : new Ext.data.HttpProxy({
+					type : "ajax",
+					url : 'src/com/extorc/util/servlet?method=querySQLServer'
+				}),
+				remoteSort : true,
+				totalProperty : "results",
+				fields : [ 'number', 'name', 'age', 'gender', 'college',
+						'classes', 'post' ],
+				root : "rows",
+
+				/*autoLoad : {
+					params : {
+						start : 0,
+						limit : 5
+					}
+				}*/
+			});
 
 			var number=new Ext.form.TextField({// -----------------------------------------------学号框
 				id : "number",
@@ -111,7 +130,7 @@ Ext
 				editable : false,
 				valueField : 'valueField',
 				displayField : 'displayField'
-			})
+			});
 			
 			var p1 = new Ext.form.FormPanel(
 					{
@@ -152,13 +171,25 @@ Ext
 								{
 									text : '查询',
 									handler : function() {
-										Ext.getCmp('number').getValue();
+										/*Ext.getCmp('number').getValue();
 										Ext.getCmp('name').getValue();
 										Ext.getCmp('age').getValue();
 										Ext.getCmp('collegeCombo').getValue();
-										Ext.getCmp('classCombo').getValue();
+										Ext.getCmp('classCombo').getValue();*/
 										
-										alert(Ext.getCmp('number').getValue()+Ext.getCmp('name').getValue()+Ext.getCmp('age').getValue()+Ext.getCmp('collegeCombo').getValue()+Ext.getCmp('classCombo').getValue());
+										//alert(Ext.getCmp('number').getValue()+Ext.getCmp('name').getValue()+Ext.getCmp('age').getValue()+Ext.getCmp('collegeCombo').getValue()+Ext.getCmp('classCombo').getValue());
+										jsonstore.load({
+											params : {
+												start : 0,
+												limit : 5,
+												number:Ext.getCmp('number').getValue(),
+												name:Ext.getCmp('name').getValue(),
+												age:Ext.getCmp('age').getValue(),
+												collegeCombo:Ext.getCmp('collegeCombo').getValue(),
+												classCombo:Ext.getCmp('classCombo').getValue()
+											}
+										});
+										
 										
 									}
 								}, {
@@ -373,35 +404,14 @@ Ext
 				items : newp
 			});
 
-			var jsonstore = new Ext.data.JsonStore({
-				/*proxy : new Ext.data.HttpProxy({
-					type : "ajax",
-					url : 'src/com/extorc/util/servlet?method=queryall'
-				}),*/
-				// reader:jreader,
-				remoteSort : true,
-				totalProperty : "results",
-				fields : [ 'number', 'name', 'age', 'gender', 'college',
-						'classes', 'post' ],
-				root : "rows",
-
-				/*autoLoad : {
-					params : {
-						start : 0,
-						limit : 5
-					}
-				}*/
-			});
-			jsonstore.load({
-				proxy : new Ext.data.HttpProxy({
-					type : "ajax",
-					url : 'src/com/extorc/util/servlet?method=queryall'
-				}),
+			
+			/*jsonstore.load({
+				
 				params : {
 					start : 0,
-					limit : 5
+					limit : 5,
 				}
-			});
+			});*/
 
 			// jsonstore.load({params:{start:0,limit:5}});
 

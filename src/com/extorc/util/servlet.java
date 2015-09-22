@@ -72,17 +72,38 @@ public class servlet extends HttpServlet {
 			studentService ss=new studentService();
 			String jsondata;
 			jsondata=ss.query("SELECT * FROM ( SELECT A.*, ROWNUM RN FROM (SELECT * FROM student order by id ) A WHERE ROWNUM <= "+(limit+start)+" ) WHERE RN >"+start);
-			System.out.println("doPost queryall---"+jsondata);
+			System.out.println("doPost queryall---");
 			out.print(jsondata);
 			out.flush();
 			out.close();
-		}else if(method.equals("query")){
+		}else if(method.equals("querySQLServer")){
 			int start = Integer.parseInt(request.getParameter("start"));
 			int limit = Integer.parseInt(request.getParameter("limit"));
+			String number=request.getParameter("number");
+			String name=request.getParameter("name");
+			String age=request.getParameter("age");
+			String collegeCombo=request.getParameter("collegeCombo");
+			String classCombo=request.getParameter("classCombo");
 			studentService ss=new studentService();
 			String jsondata;
-			jsondata=ss.query("SELECT * FROM ( SELECT A.*, ROWNUM RN FROM (SELECT * FROM student order by id ) A WHERE ROWNUM <= "+(limit+start)+" ) WHERE RN >"+start);
-			System.out.println("doPost query---"+jsondata);
+			//jsondata=ss.query("SELECT * FROM ( SELECT A.*, ROWNUM RN FROM (SELECT * FROM student order by id ) A WHERE ROWNUM <= "+(limit+start)+" ) WHERE RN >"+start);
+			//System.out.println("doPost query---");
+			String sql="";
+			if(age!=null&&age.equals("")){
+				sql="SELECT * FROM (SELECT *,ROW_NUMBER() OVER (ORDER BY id) AS RowNumber FROM student) student"+
+						" WHERE RowNumber > "+start+" AND RowNumber <="+(limit+start)+
+						" AND S_number like '%"+number+"%' AND S_name like '%"+name+"%'"+
+						" AND S_college like '%"+collegeCombo+"%' AND S_class like '%"+classCombo+"%'"+
+						" ORDER BY id";
+			}else{
+				sql="SELECT * FROM (SELECT *,ROW_NUMBER() OVER (ORDER BY id) AS RowNumber FROM student) student"+
+						" WHERE RowNumber > "+start+" AND RowNumber <="+(limit+start)+
+						" AND S_number like '%"+number+"%' AND S_name like '%"+name+"%' AND S_age ="+age+
+						" AND S_college like '%"+collegeCombo+"%' AND S_class like '%"+classCombo+"%'"+
+						" ORDER BY id";
+			}
+			System.out.println(sql);
+			jsondata=ss.query(sql);
 			out.print(jsondata);
 			out.flush();
 			out.close();
