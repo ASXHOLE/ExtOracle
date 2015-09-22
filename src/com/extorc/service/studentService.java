@@ -11,13 +11,18 @@ import com.extorc.model.Student;
 import com.extorc.util.DBCon;
 
 public class studentService {
+	private int limit;
+	private int start;
+	private int total;
 	public String query(String sql) {// 查询方法
 		ResultSet rs = null;
 		Connection conn =null;
 		studentDao sd=new studentDao();
 		JSONArray result = new JSONArray();
+		
 		rs = sd.query(sql);
 		conn=studentDao.getConn();
+		
 		String rows = "";
 		String jsondata="";
 		try {
@@ -53,8 +58,10 @@ public class studentService {
 							+ "\",\"post\":\"" + student.getPost() + "\"},";
 				}
 			}
-			rs.last();
-			jsondata="{\"results\":"+rs.getRow()+",\"rows\":["+rows+"]}";
+			rs=sd.query("select count(*) from student");
+			if(rs.next()){
+				jsondata="{\"results\":"+rs.getInt(1)+",\"rows\":["+rows+"]}";
+			}
 			conn.close();
 		} catch (SQLException e) {
 			System.out.println("查询数据失败");

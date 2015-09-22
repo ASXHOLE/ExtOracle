@@ -43,11 +43,10 @@ public class servlet extends HttpServlet {
 		if(method.equals("add")){
 			System.out.println("get addt!!");
 		}else if(method.equals("query")){
-			JSONArray al=new JSONArray();
 			studentService ss=new studentService();
 			String jsondata;
-			jsondata=ss.query("select * from student");
-			System.out.println("query---"+jsondata);
+			jsondata=ss.query("select * from student order by id");
+			System.out.println("doGet query---"+jsondata);
 			out.print(jsondata);
 			out.flush();
 			out.close();
@@ -60,12 +59,24 @@ public class servlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		//System.out.println("test!!post");
+		response.setContentType("text/html");
+		response.setCharacterEncoding("utf-8");
+		PrintWriter out = response.getWriter();
 		String method=request.getParameter("method");
+		
+		int start = Integer.parseInt(request.getParameter("start"));
+		int limit = Integer.parseInt(request.getParameter("limit"));
+		
 		if(method.equals("add")){
 			System.out.println("post add!!");
-		}else if(method.equals("text")){
-			System.out.println(" post text!!");
+		}else if(method.equals("queryall")){
+			studentService ss=new studentService();
+			String jsondata;
+			jsondata=ss.query("SELECT * FROM ( SELECT A.*, ROWNUM RN FROM (SELECT * FROM student order by id ) A WHERE ROWNUM <= "+(limit+start)+" ) WHERE RN >"+start);
+			System.out.println("doPost queryall---"+jsondata);
+			out.print(jsondata);
+			out.flush();
+			out.close();
 		}
 		
 		JSONArray al=new JSONArray();
