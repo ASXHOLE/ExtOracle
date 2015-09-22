@@ -374,10 +374,10 @@ Ext
 			});
 
 			var jsonstore = new Ext.data.JsonStore({
-				proxy : new Ext.data.HttpProxy({
+				/*proxy : new Ext.data.HttpProxy({
 					type : "ajax",
 					url : 'src/com/extorc/util/servlet?method=queryall'
-				}),
+				}),*/
 				// reader:jreader,
 				remoteSort : true,
 				totalProperty : "results",
@@ -385,11 +385,21 @@ Ext
 						'classes', 'post' ],
 				root : "rows",
 
-				autoLoad : {
+				/*autoLoad : {
 					params : {
 						start : 0,
 						limit : 5
 					}
+				}*/
+			});
+			jsonstore.load({
+				proxy : new Ext.data.HttpProxy({
+					type : "ajax",
+					url : 'src/com/extorc/util/servlet?method=queryall'
+				}),
+				params : {
+					start : 0,
+					limit : 5
 				}
 			});
 
