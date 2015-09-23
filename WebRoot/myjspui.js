@@ -46,14 +46,17 @@ Ext
 			var jsonstore = new Ext.data.JsonStore({
 				proxy : new Ext.data.HttpProxy({
 					type : "ajax",
-					url : 'src/com/extorc/util/servlet?method=querySQLServer'
+					url : 'src/com/extorc/util/servlet?method=query'
 				}),
-				remoteSort : true,
+				method : 'post',
 				totalProperty : "results",
 				fields : [ 'number', 'name', 'age', 'gender', 'college',
 						'classes', 'post' ],
 				root : "rows",
-
+				baseParams : {
+					start : 0,
+					limit : 5
+				}
 				/*autoLoad : {
 					params : {
 						start : 0,
@@ -66,7 +69,7 @@ Ext
 				id : "number",
 				fieldLabel : "学号",
 				// width:500,
-				allowBlank : false,// 默认是true,如果是false,就是不允许空
+				//allowBlank : false,// 默认是true,如果是false,就是不允许空
 				// 假如不为空时，定义提示信息 默认的提示信息是：This field is required
 				// 要使提示内容出现，需要添加 Ext.QuickTips.init();
 				blankText : "请输入学号!!!",// 为空验证失败提示信息
@@ -78,7 +81,7 @@ Ext
 			var name=new Ext.form.TextField({// -------------------------------------------姓名框
 				id : "name",
 				fieldLabel : "姓名",
-				allowBlank : false,// 默认是true,如果是false,就是不允许空
+				//allowBlank : false,// 默认是true,如果是false,就是不允许空
 				// 假如不为空时，定义提示信息 默认的提示信息是：This field is required
 				// 要使提示内容出现，需要添加 Ext.QuickTips.init();
 				blankText : "请输入姓名!!!",// 为空验证失败提示信息
@@ -87,7 +90,7 @@ Ext
 			var age=new Ext.form.NumberField({// ------------------------------------------年龄框
 				id : "age",
 				fieldLabel : "年龄",
-				allowBlank : false,// 默认是true,如果是false,就是不允许空
+				//allowBlank : false,// 默认是true,如果是false,就是不允许空
 				// 假如不为空时，定义提示信息 默认的提示信息是：This field is required
 				// 要使提示内容出现，需要添加 Ext.QuickTips.init();
 				blankText : "请输入年龄!!!",// 为空验证失败提示信息
@@ -171,25 +174,26 @@ Ext
 								{
 									text : '查询',
 									handler : function() {
-										/*Ext.getCmp('number').getValue();
-										Ext.getCmp('name').getValue();
-										Ext.getCmp('age').getValue();
-										Ext.getCmp('collegeCombo').getValue();
-										Ext.getCmp('classCombo').getValue();*/
-										
-										//alert(Ext.getCmp('number').getValue()+Ext.getCmp('name').getValue()+Ext.getCmp('age').getValue()+Ext.getCmp('collegeCombo').getValue()+Ext.getCmp('classCombo').getValue());
-										jsonstore.load({
-											params : {
+										var num = Ext.getCmp('number').getValue();
+										/*Ext.apply(jsonstore.baseParams,{
+											start : 0,
+											limit : 5,
+											"number":Ext.getCmp('number').getValue(),
+											name:Ext.getCmp('name').getValue(),
+											age:Ext.getCmp('age').getValue(),
+											collegeCombo:Ext.getCmp('collegeCombo').getValue(),
+											classCombo:Ext.getCmp('classCombo').getValue()
+										});*/
+										jsonstore.baseParams = {
 												start : 0,
 												limit : 5,
-												number:Ext.getCmp('number').getValue(),
+												"number":Ext.getCmp('number').getValue(),
 												name:Ext.getCmp('name').getValue(),
 												age:Ext.getCmp('age').getValue(),
 												collegeCombo:Ext.getCmp('collegeCombo').getValue(),
 												classCombo:Ext.getCmp('classCombo').getValue()
 											}
-										});
-										
+										jsonstore.load();
 										
 									}
 								}, {
@@ -231,6 +235,7 @@ Ext
 
 			var newp = new Ext.form.FormPanel(
 					{
+						url:'src/com/extorc/util/servlet?method=add',
 						title : "新增学生信息",
 						frame : true,
 						//autoHeight : true,
@@ -372,8 +377,49 @@ Ext
 													post : checkedPost
 												});
 										gp.stopEditing();
-										jsonstore.insert(0, p);
+										//jsonstore.insert(0, p);
 										gp.startEditing(0, 0);
+										
+									    Ext.Ajax.request({  
+									        url:'src/com/extorc/util/servlet?method=add',  
+									        method:'POST',  
+									        waitMsg:"正在提交表单数据，请稍候。。。。。。",
+									        params:{id: '',
+												number : Ext.getCmp(
+														'n_number')
+														.getValue(),
+												name : Ext.getCmp('n_name')
+														.getValue(),
+												age : Ext.getCmp('n_age')
+														.getValue(),
+												gender : Ext.getCmp(
+														'n_gender')
+														.getValue()
+														.getGroupValue(),
+												college : Ext.getCmp(
+														'n_collegeCombo')
+														.getValue(),
+												classes : Ext.getCmp(
+														'n_classCombo')
+														.getValue(),
+												post : checkedPost},  
+									        success:function(form,action){  
+										        var obj = Ext.util.JSON.decode(form.responseText);  
+										        if(obj.success==true)  
+										        {   
+										        	Ext.Msg.alert('提示',"chegngong");  
+										        	ds.reload();  
+										        }  
+										        else  
+										        {  
+										        	Ext.Msg.alert('提示',obj.msg);  
+										        }  
+									        },  
+									        failure:function(form,action){  
+									        	Ext.Msg.alert('警告','系统错误');  
+									        }  
+									        });  
+										
 										newp.form.reset();
 										newwin.hide();
 									}
@@ -453,6 +499,14 @@ Ext
 										newwin.show();
 										
 									}
+								},
+								'-',
+								{
+									text:"修改",
+									handler:function(){
+										
+									}
+									
 								},
 								'-',
 								{

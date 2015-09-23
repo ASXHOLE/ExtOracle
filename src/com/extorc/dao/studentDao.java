@@ -24,6 +24,22 @@ public class studentDao {
 		}
 		return rs;
 	}
+	
+	public void add(String sql){
+		ResultSet rs = null;
+		Statement stmt =null;
+		//Connection conn =null;
+		conn=DBCon.getConnection();
+		try{
+			stmt=(Statement) conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+			rs=stmt.executeQuery(sql);
+			//conn.close();
+		}catch(SQLException e){
+			System.out.println("查询数据失败");
+			e.printStackTrace();  
+		}
+	}
+	
 	public static Connection getConn() {
 		return conn;
 	}

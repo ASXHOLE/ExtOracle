@@ -14,13 +14,13 @@ public class studentService {
 	private int limit;
 	private int start;
 	private int total;
-	public String query(String sql) {// 查询方法
+	public String query(String sql1,String sql2) {// 查询方法
 		ResultSet rs = null;
 		Connection conn =null;
 		studentDao sd=new studentDao();
 		JSONArray result = new JSONArray();
 		
-		rs = sd.query(sql);
+		rs = sd.query(sql1);
 		conn=studentDao.getConn();
 		
 		String rows = "";
@@ -58,10 +58,13 @@ public class studentService {
 							+ "\",\"post\":\"" + student.getPost() + "\"},";
 				}
 			}
-			rs=sd.query("select count(*) from student");
+			rs=sd.query(sql2);
 			if(rs.next()){
 				jsondata="{\"results\":"+rs.getInt(1)+",\"rows\":["+rows+"]}";
 			}
+			/*rs.last();
+			jsondata="{\"results\":"+rs.getRow()+",\"rows\":["+rows+"]}";*/
+			
 			conn.close();
 		} catch (SQLException e) {
 			System.out.println("查询数据失败");
@@ -70,5 +73,9 @@ public class studentService {
 		}
 		
 		return jsondata;
+	}
+	
+	public void add(){
+		
 	}
 }

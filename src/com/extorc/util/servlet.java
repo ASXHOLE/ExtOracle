@@ -31,27 +31,9 @@ public class servlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
 		// TODO Auto-generated method stub
-		response.setContentType("text/html");
-		response.setCharacterEncoding("utf-8");
-		PrintWriter out = response.getWriter();
-
-		//DBCon dbc=new DBCon();
-		//dbc.getConnection();
-		//System.out.println("test!!out");
-		String method=request.getParameter("method");
-		if(method.equals("add")){
-			System.out.println("get addt!!");
-		}else if(method.equals("query")){
-			studentService ss=new studentService();
-			String jsondata;
-			jsondata=ss.query("select * from student order by id");
-			System.out.println("doGet query---"+jsondata);
-			out.print(jsondata);
-			out.flush();
-			out.close();
-
-		}
+		doPost(request,response);
 	}
 
 	/**
@@ -66,13 +48,52 @@ public class servlet extends HttpServlet {
 		
 		if(method.equals("add")){
 			System.out.println("post add!!");
-		}else if(method.equals("queryall")){
+			String number=request.getParameter("number");
+			String name=request.getParameter("name");
+			String age=request.getParameter("age");
+			String gender=request.getParameter("gender");
+			String college=request.getParameter("college");
+			String classes=request.getParameter("classes");
+			String post=request.getParameter("post");
+			System.out.println(number+" "+name+" "+age+" "+gender+" "+college+" "+classes+" "+post);
+		}else if(method.equals("query")){
 			int start = Integer.parseInt(request.getParameter("start"));
 			int limit = Integer.parseInt(request.getParameter("limit"));
+			String number="";
+			number=request.getParameter("number");
+			String name="";
+			name=request.getParameter("name");
+			String age="";
+			age=request.getParameter("age");
+			String collegeCombo="";
+			collegeCombo=request.getParameter("collegeCombo");
+			String classCombo="";
+			classCombo=request.getParameter("classCombo");
 			studentService ss=new studentService();
 			String jsondata;
-			jsondata=ss.query("SELECT * FROM ( SELECT A.*, ROWNUM RN FROM (SELECT * FROM student order by id ) A WHERE ROWNUM <= "+(limit+start)+" ) WHERE RN >"+start);
-			System.out.println("doPost queryall---");
+			String sql1="";
+			String sql2="";
+			if(age!=null&&age.equals("")){
+				sql1="SELECT * FROM ( SELECT A.*, ROWNUM RN FROM (SELECT * FROM student WHERE "+
+							" S_number like '%"+number+"%' AND S_name like '%"+name+"%'"+
+							" AND S_college like '%"+collegeCombo+"%' AND S_class like '%"+classCombo+"%'"+
+							" order by id DESC) A WHERE ROWNUM <= "+(limit+start)+" ) WHERE RN >"+start;
+				sql2="select count(*) from (select * from student where"+
+							" S_number like '%"+number+"%' AND S_name like '%"+name+"%'"+
+							" AND S_college like '%"+collegeCombo+"%' AND S_class like '%"+classCombo+"%'"+")";
+			}else{
+				sql1="SELECT * FROM ( SELECT A.*, ROWNUM RN FROM (SELECT * FROM student WHERE "+
+						" S_number like '%"+number+"%' AND S_name like '%"+name+"%' AND S_age ="+age+
+						" AND S_college like '%"+collegeCombo+"%' AND S_class like '%"+classCombo+"%'"+
+						" order by id DESC) A WHERE ROWNUM <= "+(limit+start)+" ) WHERE RN >"+start;
+				sql2="select count(*) from (select * from student where"+
+						" S_number like '%"+number+"%' AND S_name like '%"+name+"%' AND S_age ="+age+
+						" AND S_college like '%"+collegeCombo+"%' AND S_class like '%"+classCombo+"%'"+")";
+			}
+			//System.out.println(sql1);
+			//System.out.println(sql2);
+			jsondata=ss.query(sql1,sql2);
+			//System.out.println("doPost query---"+jsondata);
 			out.print(jsondata);
 			out.flush();
 			out.close();
@@ -86,8 +107,6 @@ public class servlet extends HttpServlet {
 			String classCombo=request.getParameter("classCombo");
 			studentService ss=new studentService();
 			String jsondata;
-			//jsondata=ss.query("SELECT * FROM ( SELECT A.*, ROWNUM RN FROM (SELECT * FROM student order by id ) A WHERE ROWNUM <= "+(limit+start)+" ) WHERE RN >"+start);
-			//System.out.println("doPost query---");
 			String sql="";
 			if(age!=null&&age.equals("")){
 				sql="SELECT * FROM (SELECT *,ROW_NUMBER() OVER (ORDER BY id) AS RowNumber FROM student) student"+
@@ -103,16 +122,16 @@ public class servlet extends HttpServlet {
 						" ORDER BY id";
 			}
 			System.out.println(sql);
-			jsondata=ss.query(sql);
-			out.print(jsondata);
+			//jsondata=ss.query(sql);
+			//out.print(jsondata);
 			out.flush();
 			out.close();
 		}
 		
-		JSONArray al=new JSONArray();
+		/*JSONArray al=new JSONArray();
 		studentDao sd=new studentDao();
 		//al=sd.query("select * from student");
-		System.out.println(al);
+		System.out.println(al);*/
 	}
 
 }
