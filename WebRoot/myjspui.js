@@ -1,5 +1,4 @@
-Ext
-		.onReady(function() {
+Ext.onReady(function() {
 			// 初始化信息提示功能
 			Ext.QuickTips.init();
 			// 统一指定错误信息提示浮动显示方式
@@ -339,47 +338,6 @@ Ext
 								{
 									text : '新增',
 									handler : function() {
-										var gp = Ext.getCmp('egp');
-										var rowIndex = gp.getStore().getCount();
-										/* 验证学号是否重复 */
-										for (var i = 0; i < rowIndex; i++) {
-											var record = gp.getStore().getAt(i);
-											var fieldName = gp.getColumnModel()
-													.getDataIndex(1);
-											var data = record.get(fieldName);
-											if (Ext.getCmp('n_number').getValue() == data) {
-												Ext.MessageBox.alert("警告",
-														"该学生学号重复，不能添加！");
-												return 0;
-											}
-										}
-										/* 添加新纪录 */
-										var p = new MyRecord(
-												{
-													id : '',
-													number : Ext.getCmp(
-															'n_number')
-															.getValue(),
-													name : Ext.getCmp('n_name')
-															.getValue(),
-													age : Ext.getCmp('n_age')
-															.getValue(),
-													gender : Ext.getCmp(
-															'n_gender')
-															.getValue()
-															.getGroupValue(),
-													college : Ext.getCmp(
-															'n_collegeCombo')
-															.getValue(),
-													classes : Ext.getCmp(
-															'n_classCombo')
-															.getValue(),
-													post : checkedPost
-												});
-										gp.stopEditing();
-										//jsonstore.insert(0, p);
-										gp.startEditing(0, 0);
-										
 									    Ext.Ajax.request({  
 									        url:'src/com/extorc/util/servlet?method=add',  
 									        method:'POST',  
@@ -405,10 +363,22 @@ Ext
 												post : checkedPost},  
 									        success:function(form,action){  
 										        var obj = Ext.util.JSON.decode(form.responseText);  
-										        if(obj.success==true)  
+									        	if(obj.success==true)  
 										        {   
-										        	Ext.Msg.alert('提示',"chegngong");  
-										        	ds.reload();  
+										        	Ext.Msg.alert('提示',obj.msg);  
+										        	jsonstore.baseParams = {
+															start : 0,
+															limit : 5,
+															number:Ext.getCmp('n_number').getValue(),
+															name : Ext.getCmp('n_name').getValue(),
+															age : Ext.getCmp('n_age').getValue(),
+															collegeCombo : Ext.getCmp('n_collegeCombo').getValue(),
+															classCombo : Ext.getCmp('n_classCombo').getValue()
+														}
+										        	jsonstore.reload();  
+										        	
+										        	newp.form.reset();
+													newwin.hide();
 										        }  
 										        else  
 										        {  
@@ -416,12 +386,13 @@ Ext
 										        }  
 									        },  
 									        failure:function(form,action){  
+									        	//var text=eval("("+form.responseText+")");
 									        	Ext.Msg.alert('警告','系统错误');  
 									        }  
 									        });  
 										
-										newp.form.reset();
-										newwin.hide();
+										/*newp.form.reset();
+										newwin.hide();*/
 									}
 								}, {
 									text : '重置',
@@ -450,16 +421,184 @@ Ext
 				items : newp
 			});
 
-			
-			/*jsonstore.load({
-				
-				params : {
-					start : 0,
-					limit : 5,
-				}
-			});*/
+			var modip = new Ext.form.FormPanel(
+					{
+						url:'src/com/extorc/util/servlet?method=modi',
+						title : "修改学生信息",
+						frame : true,
+						//autoHeight : true,
+						width : 500,
+						headerAsText : false,
+						border : false, 
+						// columnWidth: .25,
+						// layout:'column',
+						items : [ new Ext.form.TextField({// -----------------------------------------------学号框
+							id : "m_number",
+							fieldLabel : "学号",
+							// width:500,
+							allowBlank : false,// 默认是true,如果是false,就是不允许空
+							// 假如不为空时，定义提示信息 默认的提示信息是：This field is required
+							// 要使提示内容出现，需要添加 Ext.QuickTips.init();
+							blankText : "请输入学号!!!",// 为空验证失败提示信息
 
-			// jsonstore.load({params:{start:0,limit:5}});
+							emptyText : "请输入学生的学号!"// 空字段中默认显示信息
+
+						}), new Ext.form.TextField({// -------------------------------------------姓名框
+							id : "m_name",
+							fieldLabel : "姓名",
+							allowBlank : false,// 默认是true,如果是false,就是不允许空
+							// 假如不为空时，定义提示信息 默认的提示信息是：This field is required
+							// 要使提示内容出现，需要添加 Ext.QuickTips.init();
+							blankText : "请输入姓名!!!",// 为空验证失败提示信息
+						}), new Ext.form.NumberField({// ------------------------------------------年龄框
+							id : "m_age",
+							fieldLabel : "年龄",
+							allowBlank : false,// 默认是true,如果是false,就是不允许空
+							// 假如不为空时，定义提示信息 默认的提示信息是：This field is required
+							// 要使提示内容出现，需要添加 Ext.QuickTips.init();
+							blankText : "请输入年龄!!!",// 为空验证失败提示信息
+						}), new Ext.form.RadioGroup({// -------------------------------------------性别单选框
+							id : 'm_gender',
+							fieldLabel : '性别',
+							items : [ {
+								name : 'sex',// 名字相同的单选框做为一组
+								inputValue : 'm',
+								boxLabel : '男',
+								checked : true
+							}, {
+								name : 'sex',
+								inputValue : 'f',
+								boxLabel : '女'
+							} ]
+						}), new Ext.form.ComboBox({// ---------------------------------------------学院下拉框
+							id : 'm_collegeCombo',
+							fieldLabel : '学院',
+							mode : 'local',
+							readOnly : false,
+							triggerAction : 'all',
+							editable : false,
+							emptyText : '------------请选择学院------------',
+							store : collegeStore,
+							valueField : 'valueField',
+							displayField : 'displayField',
+							listeners : {
+								'select' : function() {
+									Ext.getCmp('classCombo').setValue("");
+									classStore.removeAll();
+									if (this.getValue() == 'c') {// 这里可以把这个value传到后台，动态获取班级，返回来并load到store里
+										classStore.loadData(computer);
+									} else if (this.getValue() == 'f') {
+										classStore.loadData(foreignlanguage);
+									} else if (this.getValue() == 'm') {
+										classStore.loadData(machinecar);
+									}
+								}
+							}
+
+						}), new Ext.form.ComboBox({// ---------------------------------------------班级下拉框
+							id : 'm_classCombo',
+							fieldLabel : '班级',
+							mode : 'local',
+							readOnly : false,
+							triggerAction : 'all',
+							store : classStore,
+							editable : false,
+							valueField : 'valueField',
+							displayField : 'displayField'
+						}), new Ext.form.CheckboxGroup({// ---------------------------------------职务复选组
+							id : 'm_postCheck',
+							fieldLabel : '职务',
+							items : [ {
+								boxLabel : '班长',
+								inputValue : '班长'
+							}, {
+								boxLabel : '团支书',
+								inputValue : '团支书'
+							}, {
+								boxLabel : '生活委员',
+								inputValue : '生活委员'
+							}, {
+								boxLabel : '学习委员',
+								inputValue : '学习委员'
+							} ]
+						}) ],
+						buttonAlign : 'center',
+						buttons : [
+								{
+									text : '修改',
+									handler : function() {
+									    Ext.Ajax.request({  
+									        url:'src/com/extorc/util/servlet?method=modi',  
+									        method:'POST',  
+									        waitMsg:"正在提交表单数据，请稍候。。。。。。",
+									        params:{id: '',
+												number : Ext.getCmp(
+														'm_number')
+														.getValue(),
+												name : Ext.getCmp('m_name')
+														.getValue(),
+												age : Ext.getCmp('m_age')
+														.getValue(),
+												gender : Ext.getCmp(
+														'm_gender')
+														.getValue()
+														.getGroupValue(),
+												college : Ext.getCmp(
+														'm_collegeCombo')
+														.getValue(),
+												classes : Ext.getCmp(
+														'm_classCombo')
+														.getValue(),
+												post : checkedPost},  
+									        success:function(form,action){  
+										        var obj = Ext.util.JSON.decode(form.responseText);  
+									        	if(obj.success==true)  
+										        {   
+										        	Ext.Msg.alert('提示',obj.msg);  
+										        	jsonstore.baseParams = {
+															start : 0,
+															limit : 5,
+															number:Ext.getCmp('m_number').getValue(),
+															name : Ext.getCmp('m_name').getValue(),
+															age : Ext.getCmp('m_age').getValue(),
+															collegeCombo : Ext.getCmp('m_collegeCombo').getValue(),
+															classCombo : Ext.getCmp('m_classCombo').getValue()
+														}
+										        	jsonstore.reload();  
+										        	
+										        	modip.form.reset();
+													modiwin.hide();
+										        }  
+										        else  
+										        {  
+										        	Ext.Msg.alert('提示',obj.msg);  
+										        }  
+									        },  
+									        failure:function(form,action){  
+									        	//var text=eval("("+form.responseText+")");
+									        	Ext.Msg.alert('警告','系统错误');  
+									        }  
+									        });  
+										
+										modip.form.reset();
+										modiwin.hide();
+									}
+								}, {
+									text : '重置',
+									handler : function() {
+										modip.form.reset();
+									}
+								} ]
+					});
+			var modiwin = new Ext.Window({
+				title : '修改学生信息',
+				//width : 476,
+				//height : 374,
+				//resizable : true,
+				modal : true,
+				closeAction:"hide",
+				items : modip
+			});
 
 			var selModel = new Ext.grid.CheckboxSelectionModel();
 
@@ -483,19 +622,6 @@ Ext
 									text : "新增",
 									// iconCls: "save",
 									handler : function() {
-										/*var p = new MyRecord({
-											id : '',
-											number : '',
-											name : '',
-											age : '',
-											gender : '',
-											college : '',
-											class : '',
-											post : ''
-										});
-										gp.stopEditing();
-										jsonstore.insert(0, p);
-										gp.startEditing(0, 0);*/
 										newwin.show();
 										
 									}
@@ -504,7 +630,52 @@ Ext
 								{
 									text:"修改",
 									handler:function(){
-										
+										if (selModel.getSelections().length < 1) {
+											Ext.MessageBox.alert('系统提示',
+													'请选择一条数据');
+											return;
+										} else {
+											modiwin.show();
+											var recs = gp.getSelectionModel().getSelections();
+											Ext.each(recs,
+															function(item) {
+																//alert(item.id);
+																 Ext.Ajax.request({  
+																        url:'src/com/extorc/util/servlet?method=modi',  
+																        method:'POST',  
+																        waitMsg:"正在提交数据，请稍候。。。。。。",
+																        params:{id: item.id,
+																        	
+																			},  
+																        success:function(form,action){  
+																	        var obj = Ext.util.JSON.decode(form.responseText);  
+																        	if(obj.success==true)  
+																	        {   
+																	        	Ext.Msg.alert('提示',obj.msg);  
+																	        	/*jsonstore.baseParams = {
+																						start : 0,
+																						limit : 5,
+																						"number":Ext.getCmp('number').getValue(),
+																						name:Ext.getCmp('name').getValue(),
+																						age:Ext.getCmp('age').getValue(),
+																						collegeCombo:Ext.getCmp('collegeCombo').getValue(),
+																						classCombo:Ext.getCmp('classCombo').getValue()
+																					}
+																	        	jsonstore.reload();  */
+																	        	
+																	        }  
+																	        else  
+																	        {  
+																	        	Ext.Msg.alert('提示',obj.msg);  
+																	        }  
+																        },  
+																        failure:function(form,action){  
+																        	//var text=eval("("+form.responseText+")");
+																        	Ext.Msg.alert('警告','系统错误');  
+																        }  
+																        });  
+															});
+										}
 									}
 									
 								},
@@ -524,17 +695,44 @@ Ext
 															'<span style="font-size:16px;color:#ff0000">警告</span> : 该操作将会删除选中的用户相关信息，且操作无法恢复。<br/>确定要继续吗？',
 															function(v) {
 																if (v == 'yes') {
-																	var recs = gp
-																			.getSelectionModel()
-																			.getSelections();
-																	Ext
-																			.each(
-																					recs,
-																					function(
-																							item) {
-																						jsonstore
-																								.remove(item);
-																						// store.removed.push(item);
+																	var recs = gp.getSelectionModel().getSelections();
+																	Ext.each(recs,
+																					function(item) {
+																						//alert(item.id);
+																						 Ext.Ajax.request({  
+																						        url:'src/com/extorc/util/servlet?method=delete',  
+																						        method:'POST',  
+																						        waitMsg:"正在提交数据，请稍候。。。。。。",
+																						        params:{id: item.id,
+																						        	
+																									},  
+																						        success:function(form,action){  
+																							        var obj = Ext.util.JSON.decode(form.responseText);  
+																						        	if(obj.success==true)  
+																							        {   
+																							        	Ext.Msg.alert('提示',obj.msg);  
+																							        	jsonstore.baseParams = {
+																												start : 0,
+																												limit : 5,
+																												"number":Ext.getCmp('number').getValue(),
+																												name:Ext.getCmp('name').getValue(),
+																												age:Ext.getCmp('age').getValue(),
+																												collegeCombo:Ext.getCmp('collegeCombo').getValue(),
+																												classCombo:Ext.getCmp('classCombo').getValue()
+																											}
+																							        	jsonstore.reload();  
+																							        	
+																							        }  
+																							        else  
+																							        {  
+																							        	Ext.Msg.alert('提示',obj.msg);  
+																							        }  
+																						        },  
+																						        failure:function(form,action){  
+																						        	//var text=eval("("+form.responseText+")");
+																						        	Ext.Msg.alert('警告','系统错误');  
+																						        }  
+																						        });  
 																					});
 																}
 																// Ext.getCmp('gp').getView().refresh();

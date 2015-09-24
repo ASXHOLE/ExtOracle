@@ -55,7 +55,29 @@ public class servlet extends HttpServlet {
 			String college=request.getParameter("college");
 			String classes=request.getParameter("classes");
 			String post=request.getParameter("post");
+			String jsondata="";
+			String addsql="";
 			System.out.println(number+" "+name+" "+age+" "+gender+" "+college+" "+classes+" "+post);
+			studentService ss=new studentService();
+			
+			jsondata=ss.query("select * from student where S_NUMBER='"+number+"'", "select count(*) from student where S_NUMBER='"+number+"'");//---------------验证学号重复
+			JSONArray resultArray = new JSONArray();
+			resultArray.add(jsondata);
+			int repeat=Integer.parseInt(resultArray.optJSONObject(0).get("results").toString());
+			if(repeat>0){
+				out.print("{success:false,msg:'学号重复，请重新输入！！'}");
+			}else{
+				jsondata=ss.countid("select id from (select * from student order by id desc) where ROWNUM=1");//-----计算ID值
+				resultArray.add(jsondata);
+				int id=Integer.parseInt(resultArray.optJSONObject(1).get("results").toString())+1;
+				addsql="insert into STUDENT (id, s_number, s_name, s_age, s_gender, s_college, s_class, s_post) values ("+id+", '"+number+"','"+name+"','" +age+"','"+gender+"','"+college+"','"+classes+"','"+post+"')";
+				
+				if(ss.add(addsql)){
+					out.print("{success:true,msg:'插入成功！！'}");
+				}else{
+					out.print("{success:false,msg:'插入失败！！'}");
+				}
+			}
 		}else if(method.equals("query")){
 			int start = Integer.parseInt(request.getParameter("start"));
 			int limit = Integer.parseInt(request.getParameter("limit"));
@@ -97,6 +119,19 @@ public class servlet extends HttpServlet {
 			out.print(jsondata);
 			out.flush();
 			out.close();
+		}else if(method.equals("delete")){
+			String id=request.getParameter("id");
+			studentService ss=new studentService();
+			String sql="delete from student where id='"+id+"'";
+			if(ss.delete(sql)){
+				out.print("{success:true,msg:'删除成功！！'}");
+			}else{
+				out.print("{success:false,msg:'删除失败！！'}");
+			}
+			
+			
+		}else if(method.equals("modi")){
+			
 		}else if(method.equals("querySQLServer")){
 			int start = Integer.parseInt(request.getParameter("start"));
 			int limit = Integer.parseInt(request.getParameter("limit"));

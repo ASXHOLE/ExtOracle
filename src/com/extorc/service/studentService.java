@@ -75,7 +75,65 @@ public class studentService {
 		return jsondata;
 	}
 	
-	public void add(){
+	public String countid(String sql) {// 查询id方法
+		ResultSet rs = null;
+		Connection conn =null;
+		studentDao sd=new studentDao();
+		conn=studentDao.getConn();
 		
+		String jsondata="";
+		try {
+			rs=sd.query(sql);
+			if(rs.next()){
+				jsondata="{\"results\":"+rs.getInt(1)+"}";
+			}
+			conn.close();
+		} catch (SQLException e) {
+			System.out.println("查询数据失败");
+			e.printStackTrace();
+			return null;
+		}
+		
+		return jsondata;
+	}
+	
+	public boolean add(String sql){
+		Connection conn =null;
+		studentDao sd=new studentDao();
+		
+			try{
+				if(sd.add(sql)){
+					
+				}else{
+					return false;
+				}
+				conn=studentDao.getConn();
+				conn.close();
+				return true;
+			}catch (SQLException e) {
+				System.out.println("插入数据失败");
+				e.printStackTrace();
+				return false;
+			}
+	}
+
+	public boolean delete(String sql){
+		Connection conn =null;
+		studentDao sd=new studentDao();
+		
+			try{
+				if(sd.delete(sql)){
+					
+				}else{
+					return false;
+				}
+				conn=studentDao.getConn();
+				conn.close();
+				return true;
+			}catch (SQLException e) {
+				System.out.println("删除数据失败");
+				e.printStackTrace();
+				return false;
+			}
 	}
 }
