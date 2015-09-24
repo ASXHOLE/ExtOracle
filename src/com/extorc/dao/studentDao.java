@@ -55,6 +55,21 @@ public class studentDao {
 		}
 	}
 	
+	public boolean modi(String sql){
+		ResultSet rs = null;
+		Statement stmt =null;
+		conn=DBCon.getConnection();
+		try{
+			stmt=(Statement) conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+			rs=stmt.executeQuery(sql);
+			return true;
+		}catch(SQLException e){
+			System.out.println("修改数据失败");
+			e.printStackTrace();  
+			return false;
+		}
+	}
+	
 	public static Connection getConn() {
 		return conn;
 	}

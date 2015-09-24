@@ -56,12 +56,22 @@ Ext.onReady(function() {
 					start : 0,
 					limit : 5
 				}
-				/*autoLoad : {
-					params : {
-						start : 0,
-						limit : 5
-					}
-				}*/
+			});
+			
+			var modistore=new Ext.data.JsonStore({
+				proxy : new Ext.data.HttpProxy({
+					type : "ajax",
+					url : 'src/com/extorc/util/servlet?method=modiquery'
+				}),
+				method : 'post',
+				totalProperty : "results",
+				fields : [ 'number', 'name', 'age', 'gender', 'college',
+						'classes', 'post' ],
+				root : "rows",
+				baseParams : {
+					start : 0,
+					limit : 5
+				}
 			});
 
 			var number=new Ext.form.TextField({// -----------------------------------------------学号框
@@ -440,7 +450,7 @@ Ext.onReady(function() {
 							// 假如不为空时，定义提示信息 默认的提示信息是：This field is required
 							// 要使提示内容出现，需要添加 Ext.QuickTips.init();
 							blankText : "请输入学号!!!",// 为空验证失败提示信息
-
+							
 							emptyText : "请输入学生的学号!"// 空字段中默认显示信息
 
 						}), new Ext.form.TextField({// -------------------------------------------姓名框
@@ -637,22 +647,28 @@ Ext.onReady(function() {
 										} else {
 											modiwin.show();
 											var recs = gp.getSelectionModel().getSelections();
-											Ext.each(recs,
-															function(item) {
-																//alert(item.id);
-																 Ext.Ajax.request({  
-																        url:'src/com/extorc/util/servlet?method=modi',  
+											var id=recs[0].id;
+											modistore.baseParams = {
+													start : 0,
+													limit : 5,
+													id:id
+												}
+											modistore.load();
+											Ext.getCmp('m_number').setValue(modistore.getAt(0));
+																 /*Ext.Ajax.request({  
+																        url:'src/com/extorc/util/servlet?method=modiquery',  
 																        method:'POST',  
 																        waitMsg:"正在提交数据，请稍候。。。。。。",
-																        params:{id: item.id,
+																        params:{
+																        	id : id,
 																        	
-																			},  
+																		},  
 																        success:function(form,action){  
 																	        var obj = Ext.util.JSON.decode(form.responseText);  
 																        	if(obj.success==true)  
 																	        {   
 																	        	Ext.Msg.alert('提示',obj.msg);  
-																	        	/*jsonstore.baseParams = {
+																	        	jsonstore.baseParams = {
 																						start : 0,
 																						limit : 5,
 																						"number":Ext.getCmp('number').getValue(),
@@ -661,7 +677,7 @@ Ext.onReady(function() {
 																						collegeCombo:Ext.getCmp('collegeCombo').getValue(),
 																						classCombo:Ext.getCmp('classCombo').getValue()
 																					}
-																	        	jsonstore.reload();  */
+																	        	jsonstore.reload();  
 																	        	
 																	        }  
 																	        else  
@@ -673,8 +689,7 @@ Ext.onReady(function() {
 																        	//var text=eval("("+form.responseText+")");
 																        	Ext.Msg.alert('警告','系统错误');  
 																        }  
-																        });  
-															});
+																        }); */
 										}
 									}
 									

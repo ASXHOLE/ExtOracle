@@ -129,8 +129,19 @@ public class servlet extends HttpServlet {
 				out.print("{success:false,msg:'删除失败！！'}");
 			}
 			
+		}else if(method.equals("modiquery")){
+			String id=request.getParameter("id");
+			studentService ss=new studentService();
+			String jsondata=ss.query("select * from student where id='"+id+"'", "select count(*) from student where id='"+id+"'");
+			out.print(jsondata);
+			System.out.println(jsondata);
+			out.flush();
+			out.close();
+			
 			
 		}else if(method.equals("modi")){
+			out.print("{success:true,msg:'修改成功！！'}");
+			out.print("{success:false,msg:'修改失败！！'}");
 			
 		}else if(method.equals("querySQLServer")){
 			int start = Integer.parseInt(request.getParameter("start"));

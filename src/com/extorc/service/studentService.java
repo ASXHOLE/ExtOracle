@@ -136,4 +136,24 @@ public class studentService {
 				return false;
 			}
 	}
+	
+	public boolean modi(String sql){
+		Connection conn =null;
+		studentDao sd=new studentDao();
+		
+			try{
+				if(sd.modi(sql)){
+					
+				}else{
+					return false;
+				}
+				conn=studentDao.getConn();
+				conn.close();
+				return true;
+			}catch (SQLException e) {
+				System.out.println("修改数据失败");
+				e.printStackTrace();
+				return false;
+			}
+	}
 }
