@@ -350,6 +350,9 @@ Ext.onReady(function() {
 								{
 									text : '新增',
 									handler : function() {
+										if(Ext.getCmp('n_number').getValue()==""||Ext.getCmp('n_name').getValue()==""||Ext.getCmp('n_age').getValue()==""){
+											alert("学号，姓名，年龄不能为空");
+										}else{
 									    Ext.Ajax.request({  
 									        url:'src/com/extorc/util/servlet?method=add',  
 									        method:'POST',  
@@ -402,6 +405,7 @@ Ext.onReady(function() {
 									        	Ext.Msg.alert('警告','系统错误');  
 									        }  
 									        });  
+									}
 										
 										/*newp.form.reset();
 										newwin.hide();*/
@@ -543,6 +547,9 @@ Ext.onReady(function() {
 								{
 									text : '修改',
 									handler : function() {
+										if(Ext.getCmp('m_number').getValue()==""||Ext.getCmp('m_name').getValue()==""||Ext.getCmp('m_age').getValue()==""){
+											alert("学号，姓名，年龄不能为空");
+										}else{
 									    Ext.Ajax.request({  
 									        url:'src/com/extorc/util/servlet?method=modi',  
 									        method:'POST',  
@@ -596,7 +603,7 @@ Ext.onReady(function() {
 									        	Ext.Msg.alert('警告','系统错误');  
 									        }  
 									        });  
-										
+									}
 										modip.form.reset();
 										modiwin.hide();
 									}
