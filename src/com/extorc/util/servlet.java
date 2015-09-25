@@ -140,8 +140,22 @@ public class servlet extends HttpServlet {
 			
 			
 		}else if(method.equals("modi")){
-			out.print("{success:true,msg:'修改成功！！'}");
-			out.print("{success:false,msg:'修改失败！！'}");
+			String number=request.getParameter("number");
+			String name=request.getParameter("name");
+			String age=request.getParameter("age");
+			String gender=request.getParameter("gender");
+			String college=request.getParameter("college");
+			String classes=request.getParameter("classes");
+			String post=request.getParameter("post");
+			String id=request.getParameter("id");
+			studentService ss=new studentService();
+			String sql="update student set S_NUMBER='"+number+"',S_NAME='"+name+"',S_AGE='"+age+"',S_GENDER='"+gender+"',S_COLLEGE='"+college+"',S_CLASS='"+classes+"',S_POST='"+post+"' where id="+id;
+			
+			if(ss.modi(sql)){
+				out.print("{success:true,msg:'修改成功！！'}");
+			}else{
+				out.print("{success:true,msg:'修改失败！！'}");
+			}
 			
 		}else if(method.equals("querySQLServer")){
 			int start = Integer.parseInt(request.getParameter("start"));

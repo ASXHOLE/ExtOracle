@@ -45,7 +45,8 @@ Ext.onReady(function() {
 			var jsonstore = new Ext.data.JsonStore({
 				proxy : new Ext.data.HttpProxy({
 					type : "ajax",
-					url : 'src/com/extorc/util/servlet?method=query'
+					url : 'src/com/extorc/util/servlet?method=query',
+					successProperty: "success"
 				}),
 				method : 'post',
 				totalProperty : "results",
@@ -61,11 +62,12 @@ Ext.onReady(function() {
 			var modistore=new Ext.data.JsonStore({
 				proxy : new Ext.data.HttpProxy({
 					type : "ajax",
-					url : 'src/com/extorc/util/servlet?method=modiquery'
+					url : 'src/com/extorc/util/servlet?method=modiquery',
+						successProperty: "success"
 				}),
 				method : 'post',
 				totalProperty : "results",
-				fields : [ 'number', 'name', 'age', 'gender', 'college',
+				fields : [ 'id','number', 'name', 'age', 'gender', 'college',
 						'classes', 'post' ],
 				root : "rows",
 				baseParams : {
@@ -531,6 +533,10 @@ Ext.onReady(function() {
 								boxLabel : '学习委员',
 								inputValue : '学习委员'
 							} ]
+						}),new Ext.form.TextField({
+							id:'m_id',
+							fieldLabel : 'id',
+							hidden : true 
 						}) ],
 						buttonAlign : 'center',
 						buttons : [
@@ -541,7 +547,7 @@ Ext.onReady(function() {
 									        url:'src/com/extorc/util/servlet?method=modi',  
 									        method:'POST',  
 									        waitMsg:"正在提交表单数据，请稍候。。。。。。",
-									        params:{id: '',
+									        params:{id: Ext.getCmp('m_id').getValue(),
 												number : Ext.getCmp(
 														'm_number')
 														.getValue(),
@@ -559,7 +565,7 @@ Ext.onReady(function() {
 												classes : Ext.getCmp(
 														'm_classCombo')
 														.getValue(),
-												post : checkedPost},  
+												post : mcheckedPost},  
 									        success:function(form,action){  
 										        var obj = Ext.util.JSON.decode(form.responseText);  
 									        	if(obj.success==true)  
@@ -568,6 +574,7 @@ Ext.onReady(function() {
 										        	jsonstore.baseParams = {
 															start : 0,
 															limit : 5,
+															id:Ext.getCmp('m_id').getValue(),
 															number:Ext.getCmp('m_number').getValue(),
 															name : Ext.getCmp('m_name').getValue(),
 															age : Ext.getCmp('m_age').getValue(),
@@ -600,6 +607,15 @@ Ext.onReady(function() {
 									}
 								} ]
 					});
+			var mcheckedPost = '';
+			// 获取复选组的值
+			Ext.getCmp('m_postCheck').on('change', function(cbgroup, checked) {
+				mcheckedPost = '';
+				for (var i = 0; i < checked.length; i++) {
+					mcheckedPost = mcheckedPost + ' ' + checked[i].getRawValue();
+				}
+				// alert(checkedPost);
+			});
 			var modiwin = new Ext.Window({
 				title : '修改学生信息',
 				//width : 476,
@@ -640,7 +656,7 @@ Ext.onReady(function() {
 								{
 									text:"修改",
 									handler:function(){
-										if (selModel.getSelections().length < 1) {
+										if (selModel.getSelections().length !=1) {
 											Ext.MessageBox.alert('系统提示',
 													'请选择一条数据');
 											return;
@@ -653,8 +669,26 @@ Ext.onReady(function() {
 													limit : 5,
 													id:id
 												}
-											modistore.load();
-											Ext.getCmp('m_number').setValue(modistore.getAt(0));
+											modistore.load(	{
+													callback:function(){
+														Ext.getCmp('m_number').setValue(modistore.getAt(0).get('number'));
+														Ext.getCmp('m_name').setValue(modistore.getAt(0).get('name'));
+														Ext.getCmp('m_age').setValue(modistore.getAt(0).get('age'));
+														Ext.getCmp('m_gender').setValue(modistore.getAt(0).get('gender'));
+														Ext.getCmp('m_collegeCombo').setValue(modistore.getAt(0).get('college'));
+														Ext.getCmp('m_id').setValue(modistore.getAt(0).get('id'));
+														if (modistore.getAt(0).get('college') == 'c') {
+															classStore.loadData(computer);
+														} else if (modistore.getAt(0).get('college') == 'f') {
+															classStore.loadData(foreignlanguage);
+														} else if (modistore.getAt(0).get('college') == 'm') {
+															classStore.loadData(machinecar);
+														}
+														Ext.getCmp('m_classCombo').setValue(modistore.getAt(0).get('classes'));
+														
+													}
+											});
+											
 																 /*Ext.Ajax.request({  
 																        url:'src/com/extorc/util/servlet?method=modiquery',  
 																        method:'POST',  
