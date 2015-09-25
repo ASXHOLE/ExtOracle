@@ -351,7 +351,7 @@ Ext.onReady(function() {
 									text : '新增',
 									handler : function() {
 										if(Ext.getCmp('n_number').getValue()==""||Ext.getCmp('n_name').getValue()==""||Ext.getCmp('n_age').getValue()==""){
-											alert("学号，姓名，年龄不能为空");
+											Ext.Msg.alert('警告',"学号，姓名，年龄不能为空");  
 										}else{
 									    Ext.Ajax.request({  
 									        url:'src/com/extorc/util/servlet?method=add',  
@@ -384,11 +384,11 @@ Ext.onReady(function() {
 										        	jsonstore.baseParams = {
 															start : 0,
 															limit : 5,
-															number:Ext.getCmp('n_number').getValue(),
-															name : Ext.getCmp('n_name').getValue(),
-															age : Ext.getCmp('n_age').getValue(),
-															collegeCombo : Ext.getCmp('n_collegeCombo').getValue(),
-															classCombo : Ext.getCmp('n_classCombo').getValue()
+															number:Ext.getCmp('number').getValue(),
+															name : Ext.getCmp('name').getValue(),
+															age : Ext.getCmp('age').getValue(),
+															collegeCombo : Ext.getCmp('collegeCombo').getValue(),
+															classCombo : Ext.getCmp('classCombo').getValue()
 														}
 										        	jsonstore.reload();  
 										        	
@@ -548,8 +548,9 @@ Ext.onReady(function() {
 									text : '修改',
 									handler : function() {
 										if(Ext.getCmp('m_number').getValue()==""||Ext.getCmp('m_name').getValue()==""||Ext.getCmp('m_age').getValue()==""){
-											alert("学号，姓名，年龄不能为空");
+											Ext.Msg.alert('警告',"学号，姓名，年龄不能为空");  
 										}else{
+											var m=Ext.getCmp('m_number').getValue();
 									    Ext.Ajax.request({  
 									        url:'src/com/extorc/util/servlet?method=modi',  
 									        method:'POST',  
@@ -581,12 +582,12 @@ Ext.onReady(function() {
 										        	jsonstore.baseParams = {
 															start : 0,
 															limit : 5,
-															id:Ext.getCmp('m_id').getValue(),
-															number:Ext.getCmp('m_number').getValue(),
-															name : Ext.getCmp('m_name').getValue(),
-															age : Ext.getCmp('m_age').getValue(),
-															collegeCombo : Ext.getCmp('m_collegeCombo').getValue(),
-															classCombo : Ext.getCmp('m_classCombo').getValue()
+															id:Ext.getCmp('id').getValue(),
+															number:Ext.getCmp('number').getValue(),
+															name : Ext.getCmp('name').getValue(),
+															age : Ext.getCmp('age').getValue(),
+															collegeCombo : Ext.getCmp('collegeCombo').getValue(),
+															classCombo : Ext.getCmp('classCombo').getValue()
 														}
 										        	jsonstore.reload();  
 										        	
@@ -603,9 +604,7 @@ Ext.onReady(function() {
 									        	Ext.Msg.alert('警告','系统错误');  
 									        }  
 									        });  
-									}
-										modip.form.reset();
-										modiwin.hide();
+										}
 									}
 								}, {
 									text : '重置',
@@ -696,41 +695,6 @@ Ext.onReady(function() {
 													}
 											});
 											
-																 /*Ext.Ajax.request({  
-																        url:'src/com/extorc/util/servlet?method=modiquery',  
-																        method:'POST',  
-																        waitMsg:"正在提交数据，请稍候。。。。。。",
-																        params:{
-																        	id : id,
-																        	
-																		},  
-																        success:function(form,action){  
-																	        var obj = Ext.util.JSON.decode(form.responseText);  
-																        	if(obj.success==true)  
-																	        {   
-																	        	Ext.Msg.alert('提示',obj.msg);  
-																	        	jsonstore.baseParams = {
-																						start : 0,
-																						limit : 5,
-																						"number":Ext.getCmp('number').getValue(),
-																						name:Ext.getCmp('name').getValue(),
-																						age:Ext.getCmp('age').getValue(),
-																						collegeCombo:Ext.getCmp('collegeCombo').getValue(),
-																						classCombo:Ext.getCmp('classCombo').getValue()
-																					}
-																	        	jsonstore.reload();  
-																	        	
-																	        }  
-																	        else  
-																	        {  
-																	        	Ext.Msg.alert('提示',obj.msg);  
-																	        }  
-																        },  
-																        failure:function(form,action){  
-																        	//var text=eval("("+form.responseText+")");
-																        	Ext.Msg.alert('警告','系统错误');  
-																        }  
-																        }); */
 										}
 									}
 									

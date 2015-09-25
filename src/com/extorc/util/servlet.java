@@ -134,7 +134,7 @@ public class servlet extends HttpServlet {
 			studentService ss=new studentService();
 			String jsondata=ss.query("select * from student where id='"+id+"'", "select count(*) from student where id='"+id+"'");
 			out.print(jsondata);
-			System.out.println(jsondata);
+			//System.out.println(jsondata);
 			out.flush();
 			out.close();
 			
