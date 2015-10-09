@@ -1,3 +1,39 @@
+var college = [ [ 'c', '计算机学院' ], [ 'm', '机车学院' ], [ 'f', '外国语学院' ] ];
+
+var foreignlanguage = [ [ 'f1', '英语一班' ], [ 'f2', '英语二班' ], [ 'f3', '日语一班' ],
+		[ 'f4', '日语二班' ] ];
+
+var machinecar = [ [ 'm1', '车辆一班' ], [ 'm2', '车辆二班' ], [ 'm3', '车辆三班' ] ];
+
+var computer = [ [ 'c1', '软工一班' ], [ 'c2', '软工二班' ], [ 'c3', '数媒一班' ],
+		[ 'c4', '计科一班' ], [ 'c5', '计科二班' ] ];
+
+var collegeStore = new Ext.data.ArrayStore({
+	fields : [ 'valueField', 'displayField' ],
+	data : college
+});
+
+var classStore = new Ext.data.ArrayStore({
+	fields : [ 'valueField', 'displayField' ],
+	data : []
+});
+
+var allclassStore = new Ext.data.ArrayStore({
+	fields : [ 'valueField', 'displayField' ],
+	data : []
+});
+
+/*
+ * 拼接数组方法 var allclass=foreignlanguage; allclass=allclass.concat(machinecar);
+ * allclass=allclass.concat(computer); allclassStore.loadData(allclass);
+ */
+
+/* loadData()函数方法 */
+allclassStore.loadData(foreignlanguage, true);
+allclassStore.loadData(machinecar, true);
+allclassStore.loadData(computer, true);
+			
+
 var jsonstore = new Ext.data.JsonStore(
 		{
 			proxy : new Ext.data.HttpProxy({
@@ -33,6 +69,14 @@ var modistore = new Ext.data.JsonStore({
 	}
 });
 
+var selModel = new Ext.grid.CheckboxSelectionModel();
+
+var sexStore = new Ext.data.ArrayStore({
+	fields : [ 'valField', 'displayText' ],
+	data : [ [ 'm', '男' ], [ 'f', '女' ] ]
+// 性别代码
+});
+
 var checkedPost = '';
 var mcheckedPost = '';
 
@@ -42,49 +86,14 @@ var newwin;
 var modiwin;
 var modip;
 
+var gp;
+
 Ext.onReady(function() {
 			// 初始化信息提示功能
 			Ext.QuickTips.init();
 			// 统一指定错误信息提示浮动显示方式
 			Ext.form.Field.prototype.msgTarget = 'side';
 
-			var college = [ [ 'c', '计算机学院' ], [ 'm', '机车学院' ], [ 'f', '外国语学院' ] ];
-
-			var foreignlanguage = [ [ 'f1', '英语一班' ], [ 'f2', '英语二班' ],
-					[ 'f3', '日语一班' ], [ 'f4', '日语二班' ] ];
-
-			var machinecar = [ [ 'm1', '车辆一班' ], [ 'm2', '车辆二班' ],
-					[ 'm3', '车辆三班' ] ];
-
-			var computer = [ [ 'c1', '软工一班' ], [ 'c2', '软工二班' ],
-					[ 'c3', '数媒一班' ], [ 'c4', '计科一班' ], [ 'c5', '计科二班' ] ];
-
-			var collegeStore = new Ext.data.ArrayStore({
-				fields : [ 'valueField', 'displayField' ],
-				data : college
-			});
-
-			var classStore = new Ext.data.ArrayStore({
-				fields : [ 'valueField', 'displayField' ],
-				data : []
-			});
-
-			var allclassStore = new Ext.data.ArrayStore({
-				fields : [ 'valueField', 'displayField' ],
-				data : []
-			});
-
-			/*
-			 * 拼接数组方法 var allclass=foreignlanguage;
-			 * allclass=allclass.concat(machinecar);
-			 * allclass=allclass.concat(computer);
-			 * allclassStore.loadData(allclass);
-			 */
-
-			/* loadData()函数方法 */
-			allclassStore.loadData(foreignlanguage, true);
-			allclassStore.loadData(machinecar, true);
-			allclassStore.loadData(computer, true);
 			
 			
 
@@ -370,7 +379,6 @@ Ext.onReady(function() {
 
 			modip = new Ext.form.FormPanel(
 					{
-						url:'src/com/extorc/util/servlet?method=modi',
 						title : "修改学生信息",
 						frame : true,
 						//autoHeight : true,
@@ -504,15 +512,9 @@ Ext.onReady(function() {
 				items : modip
 			});
 
-			var selModel = new Ext.grid.CheckboxSelectionModel();
+			
 
-			var sexStore = new Ext.data.ArrayStore({
-				fields : [ 'valField', 'displayText' ],
-				data : [ [ 'm', '男' ], [ 'f', '女' ] ]
-			// 性别代码
-			});
-
-			var gp = new Ext.grid.EditorGridPanel(
+			gp = new Ext.grid.EditorGridPanel(
 					{
 						id : 'egp',
 						title : '学生信息',
@@ -533,105 +535,14 @@ Ext.onReady(function() {
 								'-',
 								{
 									text:"修改",
-									handler:function(){
-										if (selModel.getSelections().length !=1) {
-											Ext.MessageBox.alert('系统提示',
-													'请选择一条数据');
-											return;
-										} else {
-											modiwin.show();
-											var recs = gp.getSelectionModel().getSelections();
-											var id=recs[0].id;
-											modistore.baseParams = {
-													start : 0,
-													limit : 5,
-													id:id
-												}
-											modistore.load(	{
-													callback:function(){
-														Ext.getCmp('m_number').setValue(modistore.getAt(0).get('number'));
-														Ext.getCmp('m_name').setValue(modistore.getAt(0).get('name'));
-														Ext.getCmp('m_age').setValue(modistore.getAt(0).get('age'));
-														Ext.getCmp('m_gender').setValue(modistore.getAt(0).get('gender'));
-														Ext.getCmp('m_collegeCombo').setValue(modistore.getAt(0).get('college'));
-														Ext.getCmp('m_id').setValue(modistore.getAt(0).get('id'));
-														if (modistore.getAt(0).get('college') == 'c') {
-															classStore.loadData(computer);
-														} else if (modistore.getAt(0).get('college') == 'f') {
-															classStore.loadData(foreignlanguage);
-														} else if (modistore.getAt(0).get('college') == 'm') {
-															classStore.loadData(machinecar);
-														}
-														Ext.getCmp('m_classCombo').setValue(modistore.getAt(0).get('classes'));
-														
-													}
-											});
-											
-										}
-									}
+									handler:modi
 									
 								},
 								'-',
 								{
 									text : "删除",
 									// iconCls: "refresh",
-									handler : function() {
-										if (selModel.getSelections().length < 1) {
-											Ext.MessageBox.alert('系统提示',
-													'请至少选择一条数据');
-											return;
-										} else {
-											Ext.MessageBox
-													.confirm(
-															'确认操作',
-															'<span style="font-size:16px;color:#ff0000">警告</span> : 该操作将会删除选中的用户相关信息，且操作无法恢复。<br/>确定要继续吗？',
-															function(v) {
-																if (v == 'yes') {
-																	var recs = gp.getSelectionModel().getSelections();
-																	Ext.each(recs,
-																					function(item) {
-																						//alert(item.id);
-																						 Ext.Ajax.request({  
-																						        url:'src/com/extorc/util/servlet?method=delete',  
-																						        method:'POST',  
-																						        waitMsg:"正在提交数据，请稍候。。。。。。",
-																						        params:{id: item.id,
-																						        	
-																									},  
-																						        success:function(form,action){  
-																							        var obj = Ext.util.JSON.decode(form.responseText);  
-																						        	if(obj.success==true)  
-																							        {   
-																							        	Ext.Msg.alert('提示',obj.msg);  
-																							        	jsonstore.baseParams = {
-																												start : 0,
-																												limit : 5,
-																												"number":Ext.getCmp('number').getValue(),
-																												name:Ext.getCmp('name').getValue(),
-																												age:Ext.getCmp('age').getValue(),
-																												collegeCombo:Ext.getCmp('collegeCombo').getValue(),
-																												classCombo:Ext.getCmp('classCombo').getValue()
-																											}
-																							        	jsonstore.reload();  
-																							        	
-																							        }  
-																							        else  
-																							        {  
-																							        	Ext.Msg.alert('提示',obj.msg);  
-																							        }  
-																						        },  
-																						        failure:function(form,action){  
-																						        	//var text=eval("("+form.responseText+")");
-																						        	Ext.Msg.alert('警告','系统错误');  
-																						        }  
-																						        });  
-																					});
-																}
-																// Ext.getCmp('gp').getView().refresh();
-
-															}, this);
-										}
-									}
+									handler : onDelete
 								} ],
 						bbar : new Ext.PagingToolbar({
 							pageSize : 5,
